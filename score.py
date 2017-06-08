@@ -1590,15 +1590,15 @@ def get_used_wids(scan_data):
         paint_wids_usage(used_wids, unused_wids)
 
 
-def githash():
+def githash(suite_path):
     # todo: 6/6/7 develop this for tacking version on ws1
     s = sha1()
-    with open('C:\\01\\score.py', 'r') as f:
+    with open(suite_path + '\\score.py', 'r') as f:
         while True:
             data1 = f.read().encode('utf-8')
             if not data1:
                 break
-    file_length = os.stat('C:\\01\\score.py').st_size
+    file_length = os.stat(suite_path + '\\score.py').st_size
     s.update(("blob %u\0" % file_length).encode('utf-8'))
     s.update(data1)
     return s.hexdigest()
@@ -1625,9 +1625,7 @@ if __name__ == '__main__':
         normalize_juliet_false_scoring = False
 
     # create scorecard from vendor input file
-    # time = strftime('scorecard-fortify-c_%m-%d-%Y_%H.%M.%S' + '_suite_' + str(suite_number).zfill(2))
     time = strftime('scorecard-fortify-' + LANG + '_%m-%d-%Y_%H.%M.%S' + '_suite_' + str(suite_number).zfill(2))
-    # vendor_input = os.path.join(suite_path, 'vendor-input-' + TOOL_NAME + '-c.xlsx')
     vendor_input = os.path.join(suite_path, 'vendor-input-' + TOOL_NAME + '-' + LANG + '.xlsx')
     scorecard = os.path.join(suite_path, time) + '.xlsx'
     shutil.copyfile(vendor_input, scorecard)
@@ -1635,7 +1633,7 @@ if __name__ == '__main__':
     # todo: 5/6/7 create argument for all files in the project
 
     # get hash of score files for rev suffix
-    git_hash = githash()
+    git_hash = githash(suite_path)
 
     # add sheets and format
     wb = load_workbook(scorecard)

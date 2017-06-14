@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET
 
 from hashlib import sha1
 from time import strftime
-from suite import Suite, TestCase
+from suite import Suite, TestCase, LANG
 from operator import itemgetter
 from openpyxl import load_workbook
 from openpyxl.styles import Border, Side, PatternFill, Font, Alignment
@@ -23,7 +23,6 @@ normalize_juliet_false_scoring = False
 TOOL_NAME = 'fortify'
 XML_OUTPUT_DIR = 'xmls'
 WID_DELIMITER_FORTIFY = ':'
-LANG = 'cpp'
 
 
 def format_workbook():
@@ -372,8 +371,10 @@ def collect_hit_data(suite_dat):
                 xml_project.num_of_hits += test_case_obj.score
                 xml_project.tc_count += test_case_obj.opp_counts
         # todo: encapusalate with try/except block for divide by zero possibility (although unlikely to occur)
+        #try:
         xml_project.percent_hits = str(round((xml_project.num_of_hits / xml_project.tc_count) * 100, 1)) + ' '
-
+        #except:
+        #print('DIVIDE BY ZERO ERROR')
         print('Collecting Hit Data for:', xml_project.new_xml_name)
 
     # sort hits by file name and then line number
@@ -475,6 +476,8 @@ def group_hit_data(suite_dat, hit_data):
             ws4.cell(row=idx + 2, column=8).value = hits1['opps']
             ws4.cell(row=idx + 2, column=9).value = '%0.0f' % percent + '%'
 
+    ''''
+    # todo: temp 06/09/17
     # merge and align cells
     for col_idx, row in enumerate(hit_analytics_titles):
         if col_idx > 4:
@@ -540,6 +543,7 @@ def group_hit_data(suite_dat, hit_data):
         #############
         for i in range(2, 9):
             ws4.cell(row=idx + 2, column=i).number_format = '#,##0'
+    '''
 
     create_hit_charts(g2b_idx, g2b_row_start)
 
@@ -1661,7 +1665,7 @@ if __name__ == '__main__':
 
     # write to sheets
     # ---------------
-    # collect_hit_data(suite_data)
+    collect_hit_data(suite_data)
     write_xml_data(suite_data)
     # ---------------
 
